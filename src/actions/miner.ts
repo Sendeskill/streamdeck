@@ -19,6 +19,8 @@ const SEQUENCES: Record<ClaudeState["state"], Segment[]> = {
 		{ anim: "dano", ms: 3000 },
 		{ anim: "golpe", ms: 1500 },
 		{ anim: "estocada", ms: 3000 },
+		{ anim: "golpe", ms: 1500 },
+		{ anim: "golpe-cima", ms: 3000 },
 	],
 	done: [
 		{ anim: "golpe", ms: 1500 },
