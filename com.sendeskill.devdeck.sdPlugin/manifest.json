@@ -21,6 +21,25 @@
 			"Controllers": ["Keypad"],
 			"States": [{ "Image": "imgs/actions/claude/key", "ShowTitle": false }],
 			"UserTitleEnabled": false
+		},
+		{
+			"Name": "Olho",
+			"UUID": "com.sendeskill.devdeck.eye",
+			"Icon": "imgs/actions/eye/icon",
+			"Tooltip": "Olho de demônio ou dragão que segue o cursor e pisca. Ao apertar, arregala.",
+			"PropertyInspectorPath": "ui/eye.html",
+			"Controllers": ["Keypad"],
+			"States": [{ "Image": "imgs/actions/eye/key", "ShowTitle": false }],
+			"UserTitleEnabled": false
+		},
+		{
+			"Name": "Claude Mineiro",
+			"UUID": "com.sendeskill.devdeck.miner",
+			"Icon": "imgs/actions/miner/icon",
+			"Tooltip": "Mineiro que trabalha enquanto o Claude Code roda e cai quando ele termina. Ao apertar, abre o VS Code.",
+			"Controllers": ["Keypad"],
+			"States": [{ "Image": "imgs/actions/miner/key", "ShowTitle": false }],
+			"UserTitleEnabled": false
 		}
 	],
 	"Category": "Sendeskill",

@@ -4,7 +4,8 @@ const OUTLOOK_APP_ID = "Microsoft.OutlookForWindows_8wekyb3d8bbwe!Microsoft.Outl
 
 // Windows only lets the foreground app steal focus; a synthetic Alt tap lifts that lock for background callers.
 const FOCUS_OR_LAUNCH = `
-$all = @(Get-Process olk -ErrorAction SilentlyContinue)
+$ProgressPreference = 'SilentlyContinue'
+$all =@(Get-Process olk -ErrorAction SilentlyContinue)
 $p = $all | Where-Object { $_.MainWindowHandle -ne 0 } | Select-Object -First 1
 if (-not $p) { "launch (olk processes: $($all.Count))"; Start-Process explorer.exe 'shell:AppsFolder\\${OUTLOOK_APP_ID}'; exit }
 Add-Type @'

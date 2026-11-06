@@ -1,6 +1,6 @@
 import path from "node:path";
 
 export const SIGNAL_DIR = path.join(process.env.LOCALAPPDATA ?? process.env.HOME ?? ".", "sendeskill-devdeck");
-export const SIGNAL_FILE = path.join(SIGNAL_DIR, "claude-done.json");
+export const STATE_FILE = path.join(SIGNAL_DIR, "claude-state.json");
 
-export type DoneSignal = { cwd: string; at: string };
+export type ClaudeState = { state: "running" | "done" | "idle"; cwd: string; at: string };
