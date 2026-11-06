@@ -6,21 +6,36 @@ import { fileURLToPath } from "node:url";
 import { claudeState } from "../claude-state";
 import type { ClaudeState } from "../signal";
 
-type Animation = "parado" | "golpe" | "golpe-cima" | "morte";
+type Animation = "parado" | "golpe" | "golpe-cima" | "dano" | "estocada" | "morte";
 type Clip = { frames: string[]; durations: number[] };
+/** A clip shown for `ms`; `once` clips play a single time and hold their last frame. */
+type Segment = { anim: Animation; ms: number; once?: boolean };
 
 const IMG_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "imgs", "miner");
-// While Claude works, alternate between the two swings, switching only at the end of a swing.
-const SWING_PHASE_MS = 3000;
+
+const SEQUENCES: Record<ClaudeState["state"], Segment[]> = {
+	running: [
+		{ anim: "golpe", ms: 1500 },
+		{ anim: "dano", ms: 3000 },
+		{ anim: "golpe", ms: 1500 },
+		{ anim: "estocada", ms: 3000 },
+	],
+	done: [
+		{ anim: "golpe", ms: 1500 },
+		{ anim: "morte", ms: 3000, once: true },
+	],
+	idle: [{ anim: "parado", ms: Infinity }],
+};
 
 @action({ UUID: "com.sendeskill.devdeck.miner" })
 export class Miner extends SingletonAction {
 	private clips = new Map<Animation, Clip>();
 	private unsubscribe?: () => void;
 	private timer?: NodeJS.Timeout;
-	private anim: Animation = "parado";
+	private sequence = SEQUENCES.idle;
+	private segment = 0;
+	private segmentStart = Date.now();
 	private frame = 0;
-	private phaseStart = Date.now();
 	private lastImage = new Map<string, string>();
 
 	override async onWillAppear(ev: WillAppearEvent): Promise<void> {
@@ -47,45 +62,45 @@ export class Miner extends SingletonAction {
 	}
 
 	private onState(s: ClaudeState): void {
-		const next: Animation = s.state === "running" ? "golpe" : s.state === "done" ? "morte" : "parado";
-		const swinging = (a: Animation) => a === "golpe" || a === "golpe-cima";
-		if (next === this.anim || (swinging(next) && swinging(this.anim))) return;
-		this.play(next);
+		const next = SEQUENCES[s.state] ?? SEQUENCES.idle;
+		if (next === this.sequence) return;
+		this.sequence = next;
+		this.startSegment(0);
 	}
 
-	private play(anim: Animation): void {
-		this.anim = anim;
+	private get current(): Segment {
+		return this.sequence[this.segment];
+	}
+
+	private startSegment(index: number): void {
+		this.segment = index % this.sequence.length;
+		this.segmentStart = Date.now();
 		this.frame = 0;
-		this.phaseStart = Date.now();
 		void this.render();
 		this.schedule();
 	}
 
 	private schedule(): void {
 		clearTimeout(this.timer);
-		const clip = this.clip(this.anim);
+		const clip = this.clip(this.current.anim);
 		this.timer = setTimeout(() => this.advance(), clip.durations[this.frame] ?? 100);
 	}
 
 	private advance(): void {
-		const clip = this.clip(this.anim);
-		if (this.frame < clip.frames.length - 1) {
-			this.frame++;
-		} else if (this.anim === "morte") {
-			// Death plays once and stays down.
+		const seg = this.current;
+		if (Date.now() - this.segmentStart >= seg.ms) {
+			this.startSegment(this.segment + 1);
 			return;
-		} else if ((this.anim === "golpe" || this.anim === "golpe-cima") && Date.now() - this.phaseStart >= SWING_PHASE_MS) {
-			this.play(this.anim === "golpe" ? "golpe-cima" : "golpe");
-			return;
-		} else {
-			this.frame = 0;
 		}
+		const clip = this.clip(seg.anim);
+		if (this.frame < clip.frames.length - 1) this.frame++;
+		else if (!seg.once) this.frame = 0;
 		void this.render();
 		this.schedule();
 	}
 
 	private async render(): Promise<void> {
-		const image = this.clip(this.anim).frames[this.frame];
+		const image = this.clip(this.current.anim).frames[this.frame];
 		for (const a of this.actions) {
 			if (a.isKey() && this.lastImage.get(a.id) !== image) {
 				this.lastImage.set(a.id, image);

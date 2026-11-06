@@ -36,7 +36,7 @@
 			"Name": "Claude Mineiro",
 			"UUID": "com.sendeskill.devdeck.miner",
 			"Icon": "imgs/actions/miner/icon",
-			"Tooltip": "Mineiro que trabalha enquanto o Claude Code roda e cai quando ele termina. Ao apertar, abre o VS Code.",
+			"Tooltip": "Mineiro que luta enquanto o Claude Code roda e repete golpe e queda quando ele termina. Ao apertar, abre o VS Code.",
 			"Controllers": ["Keypad"],
 			"States": [{ "Image": "imgs/actions/miner/key", "ShowTitle": false }],
 			"UserTitleEnabled": false
