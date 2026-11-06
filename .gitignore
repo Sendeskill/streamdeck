@@ -1,0 +1,4 @@
+node_modules/
+com.sendeskill.devdeck.sdPlugin/bin/
+com.sendeskill.devdeck.sdPlugin/logs/
+*.log

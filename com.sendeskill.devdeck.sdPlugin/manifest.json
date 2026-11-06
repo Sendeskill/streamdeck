@@ -1,0 +1,39 @@
+{
+	"Name": "Sendeskill Dev Deck",
+	"Version": "0.1.0.0",
+	"Author": "Lucas Sendeski",
+	"Actions": [
+		{
+			"Name": "Próxima reunião",
+			"UUID": "com.sendeskill.devdeck.next-meeting",
+			"Icon": "imgs/actions/meeting/icon",
+			"Tooltip": "Mostra a próxima reunião do calendário ICS. Pisca em vermelho nos 10 minutos antes. Ao apertar, abre o Outlook.",
+			"PropertyInspectorPath": "ui/next-meeting.html",
+			"Controllers": ["Keypad"],
+			"States": [{ "Image": "imgs/actions/meeting/key", "ShowTitle": false }],
+			"UserTitleEnabled": false
+		},
+		{
+			"Name": "Claude terminou",
+			"UUID": "com.sendeskill.devdeck.claude-done",
+			"Icon": "imgs/actions/claude/icon",
+			"Tooltip": "Pisca quando o Claude Code termina; ao clicar abre o VS Code no projeto.",
+			"Controllers": ["Keypad"],
+			"States": [{ "Image": "imgs/actions/claude/key", "ShowTitle": false }],
+			"UserTitleEnabled": false
+		}
+	],
+	"Category": "Sendeskill",
+	"CategoryIcon": "imgs/plugin/category-icon",
+	"CodePath": "bin/plugin.js",
+	"Description": "Próxima reunião e notificação do Claude Code.",
+	"Icon": "imgs/plugin/marketplace",
+	"SDKVersion": 3,
+	"Software": { "MinimumVersion": "7.1" },
+	"OS": [
+		{ "Platform": "mac", "MinimumVersion": "12" },
+		{ "Platform": "windows", "MinimumVersion": "10" }
+	],
+	"Nodejs": { "Version": "24", "Debug": "enabled" },
+	"UUID": "com.sendeskill.devdeck"
+}
